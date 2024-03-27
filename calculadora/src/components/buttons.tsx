@@ -1,7 +1,7 @@
 export const botoes = [
     { valor: 'C', tipo: 'limpar' },
-    { valor: '( )', tipo: 'operador' },
-    { valor: '%', tipo: 'operador' },
+    { valor: '( )', tipo: 'operadorEx' },
+    { valor: '%', tipo: 'operadorEx' },
     { valor: '/', tipo: 'operador' },
     { valor: '7', tipo: 'numerico' },
     { valor: '8', tipo: 'numerico' },
@@ -15,10 +15,9 @@ export const botoes = [
     { valor: '2', tipo: 'numerico' },
     { valor: '3', tipo: 'numerico' },
     { valor: '+', tipo: 'operador' },
-    { valor: '+/-', tipo: 'numerico' },
+    { valor: '+/-', tipo: 'numericoEx' },
     { valor: '0', tipo: 'numerico' },
     { valor: '.', tipo: 'numerico' },
     { valor: '=', tipo: 'resultado' },
 ]
-
 export type buttonType = {valor: string, tipo: string}

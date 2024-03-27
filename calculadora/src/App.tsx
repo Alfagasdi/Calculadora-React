@@ -10,7 +10,12 @@ function App(): React.JSX.Element {
 
     const listaDeBotoes = botoes
 
-    const [state, setState] = useState('0')
+    const [display, setDisplay] = useState('0')
+    const [value, setValue] = useState([0, 0])
+    const [current, setCurrent] = useState(0)
+    const [operation, setOperation] = useState('')
+    const [clearDisplay, setClearDisplay] = useState(false)
+
     function showButtons() {
         return listaDeBotoes.map((b) => {
             return <ButtomComponent key={b.valor} keys={b} onClick={performClick} />
@@ -19,7 +24,7 @@ function App(): React.JSX.Element {
 
     function performClick(newValue: buttonType) {
         if (newValue.tipo == 'operador') {
-            setOperation()
+            callOperation(newValue.valor)
         }
         if (newValue.tipo == 'limpar') {
             cleanDisplay()
@@ -32,22 +37,69 @@ function App(): React.JSX.Element {
         }
     }
 
-    function updateDisplay(newState: any) {
-        setState(state + newState)
+    function updateDisplay(newState: string) {
+        console.log(newState, {clearDisplay})
+        const values = [...value]
+        let newDisplay = value[current].toString()
+        if (clearDisplay) {
+            setDisplay(newState)
+            values[current] = parseFloat(newState)
+            setValue(values)
+            setClearDisplay(false)
+        }
+        else if (newState === '.' && display.includes('.')) {
+            return
+        }
+        else if (display === '0' && newState !== '.') {
+            newDisplay = newState
+            values[current] = parseFloat(newDisplay)
+            setValue(values)
+            setDisplay(newDisplay)
+        } else {
+            newDisplay = display + newState
+            values[current] = parseFloat(newDisplay)
+            setValue(values)
+            setDisplay(newDisplay)
+        }
     }
 
     function cleanDisplay() {
-        setState('0')
+        setDisplay('0')
+        setValue([0, 0])
+        setCurrent(0)
     }
-    function setOperation() {
-        console.warn("TODO")
+
+    function callOperation(operator: string) {
+        const avoidEquals = operator.includes('=')
+        const newOperator = avoidEquals ? operation : operator
+        const newPosition = avoidEquals ? 0 : 1
+        if (current === 0) {
+            setClearDisplay(true)
+            setCurrent(1)
+            setOperation(newOperator)
+        }
+        else {
+            const getValue = [...value]
+            try {
+                getValue[0] =
+                    eval(`${getValue[0]} ${operation} ${getValue[1]}`)
+                setDisplay(getValue[0].toString())
+            } catch (error) {
+                console.warn(error)
+            }
+            getValue[1] = 0
+            setValue(getValue)
+            setCurrent(newPosition)
+            setClearDisplay(!avoidEquals)
+
+        }
     }
     function showResult() {
-        console.warn("TODO")
+        callOperation('=')
     }
     return (
         <SafeAreaView style={styles.base}>
-            <Display display={state} />
+            <Display display={display} />
             <View style={styles.keyBoard}>
                 {showButtons()}
             </View>
